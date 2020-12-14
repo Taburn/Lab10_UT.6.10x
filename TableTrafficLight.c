@@ -108,29 +108,29 @@ int main(void){
 	PortEInit();
 	PortFInit();
 
-  EnableInterrupts();
+	EnableInterrupts();
 	
-  while(1){
+	while(1){
 		PORTB_DATA = IS[CurrentState].PortBValue;			// Write values to LEDs
 		PORTF_DATA = IS[CurrentState].PortFValue;
 		SysTickWait_10ms(IS[CurrentState].Wait * 10);	// Wait value is in 100 ms, so *10 to go from number of 100ms to 10ms.
 		ButtonInput = PORTE_DATA;											// Read buttons (see if this works as an unsigned short)
 		CurrentState =	IS[CurrentState].NextState[ButtonInput];	// Set current state to next state
-  }
+	}
 }
 
 void SysTickInit(void){
-  NVIC_ST_CTRL_R = 0;               // disable SysTick during setup
-  NVIC_ST_CTRL_R = 0x00000005;      // enable SysTick with core clock
+	NVIC_ST_CTRL_R = 0;               // disable SysTick during setup
+	NVIC_ST_CTRL_R = 0x00000005;      // enable SysTick with core clock
 }
 
 // for a 80 MHz clock, SysTick decrements every 12.5 ns
 void SysTickWait_10ms(unsigned long delay){
 	unsigned long i;
 	for(i=0; i<delay; i++){
-  	NVIC_ST_RELOAD_R = 800000-1;  					// number of counts to wait (800000 * 12.5 ns = 10 ms)
-  	NVIC_ST_CURRENT_R = 0;       						// any value written to CURRENT clears
-  	while((NVIC_ST_CTRL_R&0x00010000)==0){} // wait for count flag
+		NVIC_ST_RELOAD_R = 800000-1;  					// number of counts to wait (800000 * 12.5 ns = 10 ms)
+		NVIC_ST_CURRENT_R = 0;       						// any value written to CURRENT clears
+		while((NVIC_ST_CTRL_R&0x00010000)==0){} // wait for count flag
 	}
 }
 
